@@ -75,14 +75,59 @@ class TransactionController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $user = $request->user();
-        $user->transactions()->create([
-            'transaction_type' => 'withdrawal',
-            'amount' => $request->amount,
-            'fee' => 0,
-            'date' => now(),
-        ]);
+        try {user = User::find($request->user_id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
 
-        return redirect()->route('transactions.withdraw');
+        $amount = $request->amount;
+        $today = now();
+        $fee = 0;
+
+        // Check if it's Friday
+        $isFreeDay = $today->isFriday();
+        // Calculate the total withdrawal this month for free threshold
+        $monthlyWithdrawals = Transaction::where('user_id', $user->id)
+                                          ->where('transaction_type', 'withdrawal')
+                                          ->whereMonth('date', $today->month)
+                                          ->whereYear('date', $today->year)
+                                          ->sum('amount');
+
+        // Check account type and apply fees
+        if ($user->account_type == 'Individual') {
+            if (!$isFreeDay) {
+                if ($monthlyWithdrawals < 5000) {
+                    $freeAmount = min(5000 - $monthlyWithdrawals, $amount);
+                    $chargeableAmount = $amount - $freeAmount;
+                    $fee = ($chargeableAmount > 1000) ? 0.015 * ($chargeableAmount - 1000) : 0;
+                } else {
+                    $fee = 0.015 * max($amount - 1000, 0);
+                }
+            }
+        } elseif ($user->account_type == 'Business') {
+            $totalWithdrawal = Transaction::where('user_id', $user->id)
+                                          ->where('transaction_type', 'withdrawal')
+                                          ->sum('amount');
+            $feePercentage = ($totalWithdrawal >= 50000) ? 0.015 : 0.025;
+            $fee = $feePercentage * $amount;
+        }
+
+        // Update user balance and create transaction record
+        $user->balance -= ($amount + $fee);
+        $user->save();
+
+        $transaction = new Transaction([
+            'user_id' => $user->id,
+            'transaction_type' => 'withdrawal',
+            'amount' => $amount,
+            'fee' => $fee,
+            'date' => $today,
+        ]);
+        $transaction->save();
+
+        return response()->json([
+            'message' => 'Withdrawal successful',
+            'data' => $transaction
+        ]);
     }
 }

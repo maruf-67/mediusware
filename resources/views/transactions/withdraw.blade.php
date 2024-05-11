@@ -26,7 +26,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">$</span>
                                     </div>
-                                    <input type="number" class="form-control" id="withdraw_amount" name="withdraw_amount" required>
+                                    <input type="number" class="form-control" id="amount" name="amount" required>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-danger mt-2">Withdraw</button>
