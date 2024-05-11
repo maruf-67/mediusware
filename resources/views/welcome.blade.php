@@ -51,7 +51,7 @@
     <a href="{{ route('transactions.withdraw') }}" class="btn btn-danger btn-lg m-2">Withdraw</a>
     @endguest
 
-    {{-- <a href="#" class="btn btn-primary btn-lg mr-2">Sign In</a> --}}
+    
 </div>
 
 <div class="container">
