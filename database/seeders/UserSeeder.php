@@ -14,8 +14,8 @@ class UserSeeder extends Seeder
     {
         // Create an Individual user
         User::create([
-            'name' => 'New User',
-            'email' => 'user@gmail.com',
+            'name' => 'individual',
+            'email' => 'individual@gmail.com',
             'password' => bcrypt('password'),
             'account_type' => 'Individual',
             'balance' => 5000, // Sample balance
@@ -23,8 +23,8 @@ class UserSeeder extends Seeder
 
         // Create a Business user
         User::create([
-            'name' => 'Jane Smith',
-            'email' => 'jane@example.com',
+            'name' => 'business',
+            'email' => 'business@example.com',
             'password' => bcrypt('password'),
             'account_type' => 'Business',
             'balance' => 10000, // Sample balance
