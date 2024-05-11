@@ -48,7 +48,7 @@
     <a href="{{ route('register') }}" class="btn btn-secondary btn-lg">Sign Up</a>
     @else
     <a href="{{ route('transactions.index') }}" class="btn btn-warning btn-lg mr-2">View Transactions</a>
-    <a href="{{ route('transactions.deposit') }}" class="btn btn-danger btn-lg m-2">Deposit/Withdraw</a>
+    <a href="{{ route('transactions.withdraw') }}" class="btn btn-danger btn-lg m-2">Withdraw</a>
     @endguest
 
     {{-- <a href="#" class="btn btn-primary btn-lg mr-2">Sign In</a> --}}

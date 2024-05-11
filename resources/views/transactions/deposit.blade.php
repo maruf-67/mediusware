@@ -2,47 +2,56 @@
 
 @section('content')
 <div class="container">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <h4>Welcome, {{ auth()->user()->name }}</h4>
-            <p>Your current balance: ${{ auth()->user()->balance }}</p>
-        </div>
-        <div class="col-md-6 text-end">
-            <a href="{{ route('transactions.deposit') }}" class="btn btn-primary">Deposit</a>
-            <a href="{{ route('transactions.withdraw') }}" class="btn btn-danger">Withdraw</a>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">User Deposit</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Name:</strong> {{ Auth::user()->name }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Balance:</strong> ${{ Auth::user()->balance }}
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <strong>Deposit:</strong>
+                        <form method="POST" action="{{ route('transactions.deposit.store') }}">
+                            @csrf
+                            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+                            <div class="form-group">
+                                <label for="amount">Amount</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control" id="amount" name="amount" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Deposit</button>
+                        </form>
+                    </div>
+                    {{-- <hr>
+                    <div>
+                        <strong>Withdraw:</strong>
+                        <form method="POST" action="{{ route('transactions.withdraw.store') }}">
+                            @csrf
+                            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+                            <div class="form-group">
+                                <label for="withdraw_amount">Amount</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control" id="withdraw_amount" name="withdraw_amount" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-danger">Withdraw</button>
+                        </form>
+                    </div> --}}
+                </div>
+            </div>
         </div>
     </div>
-    <table id="transactions-table" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>User</th>
-                <th>Transaction Type</th>
-                <th>Amount</th>
-                <th>Fee</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-    </table>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    $(document).ready(function() {
-        $('#transactions-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('transactions.get') }}",
-            columns: [
-                { data: 'id', name: 'id' },
-                { data: 'user.name', name: 'user.name' },
-                { data: 'transaction_type', name: 'transaction_type' },
-                { data: 'amount', name: 'amount' },
-                { data: 'fee', name: 'fee' },
-                { data: 'date', name: 'date' }
-            ]
-        });
-    });
-</script>
-@endpush
