@@ -19,7 +19,7 @@ class TransactionController extends Controller
     public function getData(Request $request)
     {
         if ($request->ajax()) {
-            $data = Transaction::with('user')->latest()->get();
+            $data = Transaction::with('user')->where('user_id', $request->user_id)->latest()->get();
             return Datatables::of($data)->make(true);
         }
         return view('transactions');
