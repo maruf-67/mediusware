@@ -3,9 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Transaction;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -17,9 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name', 'email', 'password', 'account_type', 'balance'
     ];
 
     /**
@@ -43,5 +42,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'balance' => 'decimal:2', // Casting balance to decimal with 2 decimal places
+    ];
+
+    protected $attributes = [
+        'account_type' => 'Individual', // Default account type
+        'balance' => 0, // Default balance
+    ];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }
