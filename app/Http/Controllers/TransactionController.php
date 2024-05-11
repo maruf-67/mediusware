@@ -62,7 +62,7 @@ class TransactionController extends Controller
             throw $e;
         }
 
-        return redirect()->route('transactions.deposit');
+        return redirect()->route('transactions.index');
     }
 
     public function withdraw()
@@ -96,6 +96,7 @@ class TransactionController extends Controller
                     if ($monthlyWithdrawals < 5000) {
                         $freeAmount = min(5000 - $monthlyWithdrawals, $amount);
                         $chargeableAmount = $amount - $freeAmount;
+                        echo $freeAmount;
                         $fee = ($chargeableAmount > 1000) ? 0.015 * ($chargeableAmount - 1000) : 0;
                     } else {
                         $fee = 0.015 * max($amount - 1000, 0);
@@ -123,20 +124,10 @@ class TransactionController extends Controller
             $user->balance -= ($amount + $fee);
             $user->save();
 
-            // return response()->json([
-            //     'message' => 'Withdrawal successful',
-            //     'data' => $transaction,
-            // ]);
-
-            $user = $request->user();
-            $user->transactions()->create([
-                'transaction_type' => 'withdrawal',
-                'amount' => $request->amount,
-                'fee' => 0,
-                'date' => now(),
-            ]);
-
-            $user->update(['balance' => $user->balance - $request->amount]);
+            if($user->balance < 0 )
+            {
+                return redirect()->route('transactions.index')->with('error', 'Insufficient balance');
+            }
 
             DB::commit();
         } catch (\Exception $e) {
@@ -144,6 +135,6 @@ class TransactionController extends Controller
             throw $e;
         }
 
-        return redirect()->route('transactions.withdraw');
+        return redirect()->route('transactions.index');
     }
 }

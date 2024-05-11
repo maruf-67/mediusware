@@ -2,6 +2,18 @@
 
 @section('content')
     <div class="container">
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+
         <div class="row mb-3">
             <div class="col-md-6">
                 <h4>Welcome, {{ auth()->user()->name }}</h4>
