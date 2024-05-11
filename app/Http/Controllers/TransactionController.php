@@ -123,10 +123,10 @@ class TransactionController extends Controller
             $user->balance -= ($amount + $fee);
             $user->save();
 
-            return response()->json([
-                'message' => 'Withdrawal successful',
-                'data' => $transaction,
-            ]);
+            // return response()->json([
+            //     'message' => 'Withdrawal successful',
+            //     'data' => $transaction,
+            // ]);
 
             $user = $request->user();
             $user->transactions()->create([
